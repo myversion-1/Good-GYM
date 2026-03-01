@@ -2,7 +2,7 @@ class Translations:
     """Translation module, provides Chinese-English text support"""
     
     # Current language (default Chinese)
-    current_language = "en"
+    current_language = "zh"
     
     # Chinese-English translation dictionary
     translations = {

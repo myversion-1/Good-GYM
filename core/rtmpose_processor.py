@@ -82,6 +82,7 @@ class RTMPoseProcessor:
             
         except Exception as e:
             print(f"RTMPose initialization failed: {e}")
+            self.wholebody = None
 
     def get_keypoint_mapping(self):
         """Get keypoint mapping (COCO 17 keypoint format)"""
@@ -162,6 +163,11 @@ class RTMPoseProcessor:
         keypoints = None
         
         try:
+            # Check if RTMPose model is initialized
+            if self.wholebody is None:
+                print("RTMPose model not initialized, skipping frame processing")
+                return None, current_angle, angle_point, keypoints
+
             # Use RTMPose for pose detection
             detected_keypoints, scores = self.wholebody(frame)
             

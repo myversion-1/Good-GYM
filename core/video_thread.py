@@ -8,7 +8,7 @@ class VideoThread(QThread):
     """Video stream processing thread to avoid UI freezing"""
     change_pixmap_signal = pyqtSignal(np.ndarray, float)  # Add FPS parameter
     
-    def __init__(self, camera_id=0, rotate=True, display_width=1280, display_height=720, inference_width=640, inference_height=360):
+    def __init__(self, camera_id=0, rotate=False, display_width=1280, display_height=720, inference_width=416, inference_height=416):
         super().__init__()
         self.camera_id = camera_id
         self.rotate = rotate
@@ -24,6 +24,7 @@ class VideoThread(QThread):
         self.display_height = display_height
         self.inference_width = inference_width
         self.inference_height = inference_height
+        self.main_window = None  # Reference to main window
 
     def set_camera(self, camera_id):
         """Switch camera"""
@@ -173,6 +174,8 @@ class VideoThread(QThread):
         start_time = time.time()
         fps_display = 0
         update_interval = 10  # Update FPS display every 10 frames
+        inference_frame_count = 0  # Counter for inference frame skipping
+        inference_skip = 3  # Skip 2 frames, do inference every 3rd frame for better performance
         
         # Run flag
         while self._run_flag:
@@ -193,9 +196,13 @@ class VideoThread(QThread):
                     display_frame = cv2.flip(display_frame, 1)
                     # 同时镜像推理帧
                     inference_frame = cv2.flip(inference_frame, 1)
-                
-                # 将推理帧存储在主窗口中，供模型使用
-                if hasattr(self.main_window, 'current_inference_frame'):
+
+                # 将推理帧存储在主窗口中，供模型使用（跳帧优化）
+                inference_frame_count += 1
+                if inference_frame_count % inference_skip == 0 and hasattr(self.main_window, 'current_inference_frame'):
+                    self.main_window.current_inference_frame = inference_frame
+                elif inference_frame_count == 1 and hasattr(self.main_window, 'current_inference_frame'):
+                    # First frame always needs inference
                     self.main_window.current_inference_frame = inference_frame
                 
                 # Calculate FPS

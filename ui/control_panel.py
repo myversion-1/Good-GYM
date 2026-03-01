@@ -40,7 +40,7 @@ class ControlPanel(QWidget):
         
         # Initialize reverse mappings
         self.exercise_code_map = {v: k for k, v in self.exercise_display_map.items()}
-        self.current_exercise = "overhead_press"
+        self.current_exercise = "squat"
         
         # Setup layout
         self.layout = QVBoxLayout(self)
@@ -194,9 +194,9 @@ class ControlPanel(QWidget):
             self.exercise_combo.addItem(display)
         
         # Set default selected item
-        overhead_press_text = self.exercise_display_map.get("overhead_press", "")
-        if overhead_press_text:
-            self.exercise_combo.setCurrentText(overhead_press_text)
+        squat_text = self.exercise_display_map.get("squat", "")
+        if squat_text:
+            self.exercise_combo.setCurrentText(squat_text)
             
         self.exercise_combo.currentTextChanged.connect(self._on_exercise_changed)
         
@@ -216,9 +216,9 @@ class ControlPanel(QWidget):
         for model_code, model_display in self.model_display_map.items():
             self.model_combo.addItem(model_display, model_code)
             
-        # Set default model to RTMPose balanced mode
-        rtmpose_balanced_index = list(self.model_display_map.keys()).index("balanced")
-        self.model_combo.setCurrentIndex(rtmpose_balanced_index)
+        # Set default model to RTMPose lightweight mode
+        rtmpose_lightweight_index = list(self.model_display_map.keys()).index("lightweight")
+        self.model_combo.setCurrentIndex(rtmpose_lightweight_index)
         self.model_combo.currentIndexChanged.connect(self._on_model_changed)
         
         model_layout.addWidget(self.model_label)

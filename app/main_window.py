@@ -32,6 +32,7 @@ class WorkoutTrackerApp(QMainWindow):
         super().__init__()
         self.setWindowTitle(T.get("app_title"))
         self.setMinimumSize(900, 900)
+        self.showMaximized()  # 窗口默认最大化
         
         # 初始化核心组件
         self._init_core_components()
@@ -64,7 +65,7 @@ class WorkoutTrackerApp(QMainWindow):
         """初始化核心组件"""
         # 设备设置
         self.device = 'cpu'
-        self.model_mode = 'balanced'
+        self.model_mode = 'lightweight'
         
         # 创建运动计数器
         self.exercise_counter = ExerciseCounter()
@@ -79,7 +80,7 @@ class WorkoutTrackerApp(QMainWindow):
         )
         
         # 设置默认运动类型
-        self.exercise_type = "overhead_press"
+        self.exercise_type = "squat"
         
         # 创建声音管理器
         self.sound_manager = SoundManager()
@@ -200,14 +201,14 @@ class WorkoutTrackerApp(QMainWindow):
     
     def setup_video_thread(self):
         """设置视频处理线程"""
-        # 设置双分辨率：UI显示高分辨率，模型推理低分辨率
+        # 设置双分辨率：UI显示高分辨率，模型推理低分辨率（优化性能）
         self.video_thread = VideoThread(
             camera_id=0,
-            rotate=True,
+            rotate=False,
             display_width=1920,
             display_height=1080,
-            inference_width=640,
-            inference_height=360
+            inference_width=320,  # 进一步降低推理分辨率提升流畅度
+            inference_height=320
         )
         
         # 设置主窗口引用，用于存储推理帧

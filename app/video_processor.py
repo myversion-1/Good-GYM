@@ -17,11 +17,17 @@ class VideoProcessor:
     def update_image(self, frame, fps=0):
         """更新图像显示并处理姿态检测"""
         try:
+            # 检查 frame 是否有效
+            if frame is None:
+                return
+
             # 更新FPS值
             self.main_window.current_fps = fps
-            
-            # 使用推理帧进行姿态检测（如果可用）
+
+            # 使用推理帧进行姿态检测（如果可用），否则使用显示帧
             inference_frame = getattr(self.main_window, 'current_inference_frame', frame)
+            if inference_frame is None:
+                inference_frame = frame
             
             # 姿态处理器处理推理帧，获取关键点信息和角度点
             _, current_angle, angle_point, keypoints = self.main_window.pose_processor.process_frame(

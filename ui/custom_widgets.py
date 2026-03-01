@@ -8,7 +8,7 @@ class ToggleSwitch(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setCheckable(True)
-        self.setChecked(True)  # Default on state
+        self.setChecked(False)  # Default off state
         self.setMinimumWidth(80)
         self.setMaximumWidth(80)
         self.setMinimumHeight(30)
